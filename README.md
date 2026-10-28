@@ -73,11 +73,10 @@ The current repository implementation uses in-memory storage. A PostgreSQL-backe
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/MainakDanOpRes/hems-api-design.git
 cd hems_api_design
 ```
 
-Replace `<your-repository-url>` with your GitHub repository URL.
 
 ### 2. Install dependencies
 
