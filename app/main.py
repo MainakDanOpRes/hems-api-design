@@ -1,3 +1,4 @@
+"""Create the FastAPI application, configure its metadata, and register API routers and health checks."""
 
 from fastapi import FastAPI
 from app.api.devices import router as devices_router
