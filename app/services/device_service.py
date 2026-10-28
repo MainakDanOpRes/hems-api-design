@@ -34,6 +34,9 @@ class DeviceRepository(Protocol):
     def get_by_id(self, device_id: str) -> Device | None:
         ...
 
+    def get_by_home_id(self, home_id: str) -> list[Device]:
+        ...
+
     def update(self, device: Device) -> Device:
         ...
 
@@ -79,6 +82,15 @@ class DeviceService:
             )
 
         return device
+
+    def get_devices_for_home(self, home_id: str) -> list[Device]:
+        """Return all devices belonging to an existing home."""
+        home = self.home_repository.get_by_id(home_id)
+
+        if home is None:
+            raise HomeNotFoundError(f"Home '{home_id}' not found")
+
+        return self.device_repository.get_by_home_id(home_id)
 
     def update_device_status(
         self,

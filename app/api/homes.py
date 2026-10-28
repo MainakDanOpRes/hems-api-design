@@ -6,8 +6,10 @@ import math
 
 
 from app.api.validation import NameField, TimezoneField
-from app.api.dependencies import get_home_service
+from app.api.dependencies import get_home_service, get_device_service
+from app.domain.device import Device
 from app.domain.home import Home
+from app.services.device_service import DeviceService
 from app.services.home_service import HomeRegistrationData, HomeService
 from app.services.exceptions import HomeNotFoundError
 
@@ -57,5 +59,18 @@ def get_home(
     except HomeNotFoundError as exc:
         raise HTTPException(
             status_code=404,
+            detail=str(exc),
+        ) from exc
+
+@router.get("/{home_id}/devices", response_model=list[Device])
+def get_home_devices(
+    home_id: str,
+    service: DeviceService = Depends(get_device_service),
+) -> list[Device]:
+    try:
+        return service.get_devices_for_home(home_id)
+    except HomeNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),
         ) from exc

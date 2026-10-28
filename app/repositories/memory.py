@@ -27,6 +27,14 @@ class InMemoryDeviceRepository:
     def get_by_id(self, device_id: str) -> Device | None:
         return self.devices.get(device_id)
 
+    def get_by_home_id(self, home_id: str) -> list[Device]:
+        """Return all devices registered to a specific home."""
+        return [
+            device
+            for device in self.devices.values()
+            if device.home_id == home_id
+        ]
+
     def update(self, device: Device) -> Device:
         self.devices[device.id] = device
         return device
