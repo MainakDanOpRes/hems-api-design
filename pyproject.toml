@@ -1,0 +1,17 @@
+[project]
+name = "hems-api-design"
+version = "0.1.0"
+description = "API for managing home energy devices and optimizing energy use."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.142.2",
+    "httpx2>=2.13.1",
+    "tzdata>=2026.6",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
