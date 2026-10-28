@@ -1,3 +1,4 @@
+"""Test Home model validation, including valid values and invalid power limits."""
 
 import pytest
 from pydantic import ValidationError

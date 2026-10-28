@@ -1,3 +1,5 @@
+"""Define the domain model and charging-related properties of an electric vehicle charger."""
+
 from pydantic import BaseModel, Field
 
 from app.domain.capabilities import DeviceCapabilities

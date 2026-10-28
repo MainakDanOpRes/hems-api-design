@@ -1,0 +1,1 @@
+"""Contain the core domain models and rules for the home energy management system."""

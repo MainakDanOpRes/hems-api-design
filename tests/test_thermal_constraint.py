@@ -1,3 +1,4 @@
+"""Test constraints governing thermal operation."""
 
 import pytest
 from pydantic import ValidationError

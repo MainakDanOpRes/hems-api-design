@@ -1,3 +1,4 @@
+"""Test constraints that limit electrical power."""
 
 import pytest
 from pydantic import ValidationError

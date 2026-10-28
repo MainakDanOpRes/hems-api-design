@@ -1,3 +1,5 @@
+"""Define HTTP endpoints for registering devices, retrieving devices, and updating their status."""
+
 from pydantic import BaseModel, Field
 from fastapi import status
 from fastapi import APIRouter, Depends, HTTPException

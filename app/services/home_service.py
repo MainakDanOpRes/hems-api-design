@@ -1,5 +1,8 @@
+"""Implement home-related use cases, including registration and retrieval, using a home repository."""
+
 from typing import Protocol
 
+from app.services.exceptions import HomeNotFoundError
 from app.domain.home import Home
 from uuid import uuid4
 
@@ -36,3 +39,9 @@ class HomeService:
             max_export_kw=data.max_export_kw,
         )
         return self.home_repository.save(home)
+
+    def get_home(self, home_id: str) -> Home:
+        home = self.home_repository.get_by_id(home_id)
+        if home is None:
+            raise HomeNotFoundError(f"Home '{home_id}' not found")
+        return home

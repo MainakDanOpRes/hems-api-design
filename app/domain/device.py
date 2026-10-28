@@ -1,3 +1,5 @@
+"""Define device types, operational statuses, and the common Device model."""
+
 from enum import Enum
 
 from pydantic import BaseModel, Field

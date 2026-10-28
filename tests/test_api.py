@@ -1,4 +1,5 @@
-
+"""Test API endpoints, response codes, request validation, and error handling."""
+    
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -310,3 +311,29 @@ def test_register_home_rejects_infinite_import_limit():
     )
 
     assert response.status_code == 422
+
+
+def test_get_home_returns_existing_home():
+    create_response = client.post(
+        "/homes",
+        json={
+            "name": "Retrieval Test Home",
+            "timezone": "Europe/Paris",
+            "max_import_kw": 12.0,
+            "max_export_kw": 6.0,
+        },
+    )
+    home_id = create_response.json()["id"]
+
+    response = client.get(f"/homes/{home_id}")
+
+    assert response.status_code == 200
+    assert response.json()["id"] == home_id
+    assert response.json()["name"] == "Retrieval Test Home"
+
+
+def test_get_home_returns_404_when_home_does_not_exist():
+    response = client.get("/homes/home-404")
+
+    assert response.status_code == 404
+    assert "not found" in response.json()["detail"].lower()

@@ -1,3 +1,5 @@
+"""Represent energy transfers between sources and destinations within an energy system."""
+
 from datetime import datetime
 from enum import Enum
 

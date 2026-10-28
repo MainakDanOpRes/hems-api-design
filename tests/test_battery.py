@@ -1,3 +1,4 @@
+"""Test battery domain-model validation and behavior."""
 
 import pytest
 

@@ -1,3 +1,5 @@
+"""Represent measured energy-system values, including their associated units and measurement context."""
+
 from datetime import datetime
 
 from pydantic import BaseModel, Field

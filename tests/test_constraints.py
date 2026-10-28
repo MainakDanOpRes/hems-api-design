@@ -1,3 +1,4 @@
+"""Test general device constraint definitions and validation rules."""
 
 import pytest
 from pydantic import ValidationError

@@ -1,3 +1,5 @@
+"""Represent the capabilities that determine which operations an energy device can perform."""
+
 from pydantic import BaseModel
 
 

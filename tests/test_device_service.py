@@ -1,3 +1,4 @@
+"""Test device-service use cases, status updates, and repository interactions."""
 
 import pytest
 

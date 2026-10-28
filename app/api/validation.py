@@ -1,3 +1,4 @@
+"""Define reusable input validation and normalization rules for names and time zones."""
 
 from typing import Annotated
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError

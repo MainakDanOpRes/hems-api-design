@@ -1,3 +1,4 @@
+"""Test constraints governing electric vehicle charging."""
 
 import pytest
 from pydantic import ValidationError

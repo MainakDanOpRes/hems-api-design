@@ -1,0 +1,1 @@
+"""Group automated tests for the home energy management system."""

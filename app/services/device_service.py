@@ -1,3 +1,4 @@
+"""Implement device-related use cases and coordinate device operations with the required repositories."""
 
 from typing import Protocol
 from uuid import uuid4

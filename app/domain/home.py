@@ -1,3 +1,4 @@
+"""Define the Home model and validate its identity, time zone, and import/export power limits."""
 
 import math
 

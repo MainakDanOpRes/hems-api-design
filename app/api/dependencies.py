@@ -1,3 +1,4 @@
+"""Provide shared repositories and service instances to FastAPI endpoints through dependency injection."""
 
 from app.repositories.memory import (
     InMemoryDeviceRepository,

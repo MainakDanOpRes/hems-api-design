@@ -1,0 +1,1 @@
+"""Group repository implementations responsible for storing and retrieving domain objects."""

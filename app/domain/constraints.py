@@ -1,3 +1,5 @@
+"""Define constraint types and rules that limit or govern device operation."""
+
 from typing import Annotated, Literal
 from datetime import datetime
 from pydantic import BaseModel, Field, model_validator

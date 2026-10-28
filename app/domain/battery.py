@@ -1,3 +1,5 @@
+"""Define the domain model and properties specific to a home energy storage battery."""
+
 from pydantic import BaseModel, Field
 
 from app.domain.capabilities import DeviceCapabilities

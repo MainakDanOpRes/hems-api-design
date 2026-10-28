@@ -1,3 +1,5 @@
+"""Define heat-pump properties relevant to electrical demand and thermal operation."""
+
 from pydantic import BaseModel, Field
 
 from app.domain.capabilities import DeviceCapabilities

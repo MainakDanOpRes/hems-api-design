@@ -1,3 +1,5 @@
+"""Represent a vehicle and its relevant characteristics for home energy management."""
+
 from pydantic import BaseModel, Field
 
 

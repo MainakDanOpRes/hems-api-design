@@ -1,3 +1,4 @@
+"""Provide in-memory repositories for homes and devices during development and testing."""
 
 from app.domain.device import Device
 from app.domain.home import Home
