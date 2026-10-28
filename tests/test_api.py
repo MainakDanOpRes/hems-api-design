@@ -392,3 +392,52 @@ def test_get_home_devices_returns_404_for_unknown_home():
 
     assert response.status_code == 404
     assert "not found" in response.json()["detail"].lower()
+
+def test_update_device_status():
+    home_response = client.post(
+        "/homes",
+        json={
+            "name": "Status Test Home",
+            "timezone": "Europe/Paris",
+            "max_import_kw": 12.0,
+            "max_export_kw": 6.0,
+        },
+    )
+    home_id = home_response.json()["id"]
+
+    device_response = client.post(
+        f"/devices/homes/{home_id}",
+        json={
+            "name": "Test Meter",
+            "type": "smart_meter",
+            "manufacturer": "Example",
+            "model": "Meter-1",
+        },
+    )
+    device_id = device_response.json()["id"]
+
+    response = client.patch(
+        f"/devices/{device_id}/status",
+        json={"status": "online"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "online"
+
+
+def test_update_device_status_returns_404_for_unknown_device():
+    response = client.patch(
+        "/devices/device-404/status",
+        json={"status": "online"},
+    )
+
+    assert response.status_code == 404
+
+
+def test_update_device_status_rejects_invalid_status():
+    response = client.patch(
+        "/devices/device-404/status",
+        json={"status": "sleeping"},
+    )
+
+    assert response.status_code == 422

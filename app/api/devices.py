@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 
 from app.api.validation import NameField
-from app.domain.device import Device, DeviceType
+from app.domain.device import Device, DeviceType, DeviceStatus
 from app.services.device_service import DeviceService, DeviceRegistrationData
 from app.services.exceptions import DeviceNotFoundError, HomeNotFoundError
 from app.api.dependencies import get_device_service
@@ -34,7 +34,9 @@ class DeviceRegistrationRequest(BaseModel):
     type: DeviceType
     manufacturer: NameField
     model: NameField
-        
+
+class DeviceStatusUpdateRequest(BaseModel):
+    status: DeviceStatus
 
 
 @router.post(
@@ -57,6 +59,23 @@ def register_device(
     try:
         return service.register_device(home_id, registration_data)
     except HomeNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+
+@router.patch("/{device_id}/status", response_model=Device)
+def update_device_status(
+    device_id: str,
+    data: DeviceStatusUpdateRequest,
+    service: DeviceService = Depends(get_device_service),
+) -> Device:
+    try:
+        return service.update_device_status(
+            device_id=device_id,
+            status=data.status,
+        )
+    except DeviceNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),
