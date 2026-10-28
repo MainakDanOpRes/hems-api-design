@@ -1,385 +1,168 @@
-# Home Energy Management System (HEMS)
+# Home Energy Management System API
 
-A production-oriented Home Energy Management System API built with **Python and FastAPI**.
+A Python REST API for managing home energy devices, representing energy-system constraints, and building toward intelligent home energy management.
 
-The goal of this project is to design a system capable of monitoring and managing residential energy assets such as solar PV, batteries, EV chargers, heat pumps, and smart meters.
+This project is being developed as a portfolio project to demonstrate API design, domain modelling, software testing, persistence, and energy-management concepts.
 
-The system is being developed incrementally, starting from the **domain model** and evolving toward a complete backend with telemetry, scheduling, forecasting, tariffs, and energy optimization.
+## Project goals
 
----
+The long-term goal is to build a Home Energy Management System (HEMS) that can represent a home's energy devices and constraints, collect measurements, and eventually support scheduling and energy optimisation.
 
-## Project Goals
+The implementation is being developed incrementally, with an emphasis on clear separation of responsibilities, validated data, and maintainable code.
 
-The system is designed to eventually support:
+## Current features
 
-* Home and device management
-* Real-time device state
-* Energy measurements and telemetry
-* Energy-flow tracking
-* Device commands
-* Scheduling
-* Electricity tariffs and time-varying prices
-* Solar PV production forecasting
-* Home energy-demand forecasting
-* Optimal energy scheduling
-* Battery charging/discharging optimization
-* EV charging optimization
-* Integration with physical gateways and devices
-* MQTT-based telemetry and communication
-* Authentication and authorization
-* Persistent storage with PostgreSQL
-* Automated testing
-* Containerized deployment
-* API documentation with OpenAPI
+- **Home management:** Register homes with a time zone and maximum grid import/export power limits.
+- **Device management:** Register devices associated with a home and retrieve individual devices.
+- **Device status:** Update a device's operational status.
+- **Domain modelling:** Represent device types, statuses, capabilities, measurements, energy flows, and operating constraints.
+- **Input validation:** Validate request data, names, time zones, and power limits.
+- **HTTP error handling:** Return appropriate HTTP status codes for missing resources and invalid requests.
+- **Automated tests:** Test domain behaviour, service logic, validation, and API endpoints.
 
-The project is intentionally being developed step by step so that the domain and architecture remain understandable and maintainable.
+### Supported device categories
 
----
+The domain model currently includes:
+
+- Solar photovoltaic (PV) systems
+- Batteries
+- Electric vehicle (EV) chargers
+- Heat pumps
+- Smart meters
+- Washing machines
+
+## Technology stack
+
+- **Python 3.12+**
+- **FastAPI** — REST API framework
+- **Pydantic** — data modelling and validation
+- **Uvicorn** — ASGI application server
+- **pytest** — automated testing
+- **uv** — dependency and project management
+
+PostgreSQL, SQLAlchemy, and Alembic are planned for the persistence layer.
 
 ## Architecture
 
-The target architecture is:
+The project separates the API, application services, domain models, and repositories.
 
 ```text
-                    ┌─────────────────────┐
-                    │      REST API       │
-                    │      FastAPI        │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │ Application Services│
-                    │                     │
-                    │ Scheduling          │
-                    │ Forecasting         │
-                    │ Tariffs             │
-                    │ Optimization         │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │     Domain Model    │
-                    │                     │
-                    │ Home                │
-                    │ Device              │
-                    │ Measurement         │
-                    │ EnergyFlow          │
-                    │ Command             │
-                    │ Schedule            │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │   Infrastructure    │
-                    │                     │
-                    │ PostgreSQL          │
-                    │ MQTT                │
-                    │ External APIs       │
-                    └─────────────────────┘
+app/
+├── api/           # HTTP routes, request validation and dependencies
+├── domain/        # Core energy and device domain models
+├── services/      # Application use cases and business logic
+└── repositories/  # Data access abstractions and implementations
 ```
 
-The domain model is kept separate from the API and infrastructure layers so that business rules are not tightly coupled to FastAPI or a particular database.
+The main responsibilities are:
 
----
+- **API layer:** Handles HTTP requests, validates inputs, and translates application errors into HTTP responses.
+- **Service layer:** Coordinates use cases, such as registering homes and devices or updating device status.
+- **Domain layer:** Defines the core concepts, data structures, and validation rules of the HEMS.
+- **Repository layer:** Abstracts data access so persistence can evolve without coupling business logic to a particular storage implementation.
 
-## Domain Model
+The current repository implementation uses in-memory storage. A PostgreSQL-backed implementation is planned.
 
-The current domain model contains the following concepts:
+## Getting started
 
-```text
-Home
- │
- ├── Devices
- │     │
- │     ├── Device
- │     └── Battery
- │
- ├── Measurements
- │
- └── Energy Flows
+### Prerequisites
+
+- Python 3.12 or later
+- [uv](https://docs.astral.sh/uv/)
+
+### 1. Clone the repository
+
+```bash
+git clone <your-repository-url>
+cd hems_api_design
 ```
 
-### Home
+Replace `<your-repository-url>` with your GitHub repository URL.
 
-Represents a residential energy system.
+### 2. Install dependencies
 
-A home currently contains:
-
-* unique identifier
-* name
-* timezone
-* maximum grid import power
-* maximum grid export power
-
-### Device
-
-Represents a physical or logical energy device belonging to a home.
-
-Examples include:
-
-* Smart meter
-* Solar PV
-* Battery
-* EV charger
-* Heat pump
-* Washing machine
-
-Devices have:
-
-* identity
-* type
-* manufacturer
-* model
-* operational status
-
-### Battery
-
-A battery is modeled as a specialized device.
-
-It extends the common `Device` model with battery-specific information such as:
-
-* capacity
-* maximum charging power
-* maximum discharging power
-* state of charge
-* current power
-* capabilities
-
-The project uses a combination of **inheritance and composition**:
-
-```text
-Device
-   ↑
-Battery
-   │
-   ├── BatteryState
-   └── DeviceCapabilities
+```bash
+uv sync
 ```
 
-This allows common device behavior to be shared while keeping device-specific state and capabilities separate.
+### 3. Run the API
 
-### Measurement
-
-A measurement represents an observation made by a device at a particular point in time.
-
-Examples:
-
-```text
-Battery SOC = 73%
-Battery power = 3 kW
-PV power = 4.2 kW
-Grid import = 2.1 kW
+```bash
+uv run uvicorn app.main:app --reload
 ```
 
-Measurements are historical data and will eventually form the foundation for telemetry, monitoring, forecasting, and optimization.
+The API will normally be available at:
 
----
+- API base URL: http://127.0.0.1:8000
+- Interactive Swagger documentation: http://127.0.0.1:8000/docs
+- Alternative API documentation: http://127.0.0.1:8000/redoc
 
-## Example Home
+### 4. Run the tests
 
-The project uses a representative residential energy system for development and testing.
-
-Example devices:
-
-| Device          | Type          | Example             |
-| --------------- | ------------- | ------------------- |
-| Smart Meter     | Meter         | Grid import/export  |
-| Solar PV        | Generator     | 6 kW PV system      |
-| Home Battery    | Storage       | 10 kWh battery      |
-| EV Charger      | Flexible load | 7.4 kW charger      |
-| Heat Pump       | Flexible load | Heating/cooling     |
-| Washing Machine | Flexible load | Shiftable appliance |
-
-This example will become progressively more realistic as the system develops.
-
----
-
-## Technology Stack
-
-Current:
-
-* Python
-* Pydantic
-* FastAPI
-
-Planned:
-
-* PostgreSQL
-* SQLAlchemy
-* MQTT
-* Docker
-* Pytest
-* OpenAPI
-* Authentication / authorization
-* Forecasting libraries
-* Optimization solver
-
----
-
-## Project Structure
-
-Current project structure:
-
-```text
-hems/
-├── app/
-│   ├── __init__.py
-│   └── domain/
-│       ├── __init__.py
-│       ├── home.py
-│       ├── device.py
-│       ├── battery.py
-│       ├── capabilities.py
-│       └── measurement.py
-│
-├── main.py
-├── test_domain.py
-└── README.md
+```bash
+uv run python -m pytest -v
 ```
 
-The structure will evolve as application, infrastructure, API, database, and testing layers are introduced.
+## API overview
 
----
+The API currently provides endpoints for:
 
-## Development Roadmap
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/health` | Check API health |
+| `POST` | `/homes` | Register a home |
+| `GET` | `/homes/{home_id}` | Retrieve a home |
+| `GET` | `/homes/{home_id}/devices` | List devices belonging to a home |
+| `POST` | `/devices/homes/{home_id}` | Register a device for a home |
+| `GET` | `/devices/{device_id}` | Retrieve a device |
+| `PATCH` | `/devices/{device_id}/status` | Update a device's status |
 
-### Phase 1 — Domain Modeling
+Consult the interactive Swagger documentation at `/docs` for request schemas, response formats, and endpoint details.
 
-* [x] Model `Home`
-* [x] Model `Device`
-* [x] Define device types
-* [x] Define device status
-* [x] Model device capabilities
-* [x] Model `Battery`
-* [x] Model battery state
-* [x] Model `Measurement`
-* [ ] Model energy flows
-* [ ] Model device constraints
-* [ ] Model commands
-* [ ] Model schedules
-* [ ] Model tariffs
-* [ ] Model forecasts
-* [ ] Model optimization plans
+## Testing
 
-### Phase 2 — Application Layer
+The project uses pytest to verify domain rules, application-service behaviour, request validation, and API responses.
 
-* [ ] Define application services
-* [ ] Define use cases
-* [ ] Separate business logic from API layer
-* [ ] Add domain validation rules
-* [ ] Introduce repositories
+Run the complete test suite with:
 
-### Phase 3 — REST API
+```bash
+uv run python -m pytest -v
+```
 
-* [ ] Home endpoints
-* [ ] Device endpoints
-* [ ] Measurement endpoints
-* [ ] Energy-flow endpoints
-* [ ] Command endpoints
-* [ ] Schedule endpoints
-* [ ] Tariff endpoints
-* [ ] Forecast endpoints
-* [ ] Optimization endpoints
+Tests are developed alongside features to help prevent regressions as the architecture evolves.
 
-### Phase 4 — Persistence
+## Roadmap
 
-* [ ] PostgreSQL
-* [ ] SQLAlchemy
-* [ ] Database migrations
-* [ ] Repository implementations
-* [ ] Time-series data strategy
+- [x] Define core home and device domain models
+- [x] Implement home and device registration
+- [x] Add API endpoints for retrieving homes and devices
+- [x] Implement device status updates
+- [x] Add automated tests for domain, services, and API behaviour
+- [ ] Add PostgreSQL persistence
+- [ ] Introduce SQLAlchemy and Alembic migrations
+- [ ] Add persistent measurements and energy-flow records
+- [ ] Model device availability and scheduling
+- [ ] Implement energy-management constraints and scheduling logic
+- [ ] Develop an energy optimisation strategy
+- [ ] Add deployment configuration and operational documentation
 
-### Phase 5 — Telemetry & Device Integration
+## Design principles
 
-* [ ] MQTT integration
-* [ ] Gateway model
-* [ ] Telemetry ingestion
-* [ ] Device state updates
-* [ ] Device commands
-* [ ] Event processing
+The project aims to demonstrate:
 
-### Phase 6 — Energy Intelligence
+- Separation of concerns and modular architecture
+- Explicit domain models and validation rules
+- Repository abstractions for replaceable persistence
+- Clear error handling and HTTP semantics
+- Test-driven, incremental development
+- A gradual path from API fundamentals toward energy-management functionality
 
-* [ ] Electricity tariff integration
-* [ ] PV production forecasting
-* [ ] Home demand forecasting
-* [ ] Battery optimization
-* [ ] EV charging optimization
-* [ ] Flexible-load scheduling
-* [ ] Global home energy optimization
+## Status
 
-### Phase 7 — Production Readiness
+**In active development.**
 
-* [ ] Authentication
-* [ ] Authorization / RBAC
-* [ ] Structured logging
-* [ ] Error handling
-* [ ] Automated tests
-* [ ] Integration tests
-* [ ] Docker
-* [ ] CI/CD
-* [ ] API documentation
-* [ ] Monitoring
-* [ ] Deployment
+The current version focuses on the core API, domain model, and application-service structure. Persistent storage, scheduling, and optimisation remain future development milestones.
 
----
+## License
 
-## Design Principles
-
-The project follows several principles:
-
-### Domain first
-
-Business concepts and rules are modeled before implementing API endpoints.
-
-### Separation of concerns
-
-The domain should not depend directly on FastAPI, PostgreSQL, MQTT, or external services.
-
-### Explicit business rules
-
-Energy constraints should be represented explicitly rather than hidden inside API endpoints.
-
-### Time-series awareness
-
-Energy measurements are inherently time-dependent, so historical observations are treated differently from current device state.
-
-### Optimization-ready design
-
-Device capabilities, constraints, forecasts, tariffs, and schedules are being modeled with the future optimization engine in mind.
-
-### Incremental complexity
-
-The system starts with a clear domain model and progressively introduces infrastructure and production concerns.
-
----
-
-## Current Status
-
-**Early development — Domain Modeling**
-
-The current implementation focuses on establishing a clean domain model before building the complete REST API and persistence layer.
-
-The project is not yet production-ready.
-
----
-
-## Future Vision
-
-The final system should be able to answer questions such as:
-
-> When should the battery charge?
-
-> Should the battery charge from the grid or wait for solar production?
-
-> When is the cheapest time to charge the EV?
-
-> Can the home avoid exceeding its grid-import limit?
-
-> How much solar energy will be produced tomorrow?
-
-> How should flexible appliances be scheduled around electricity prices?
-
-> What is the optimal energy schedule for the next 24 hours?
-
-The long-term objective is to build these capabilities on top of a well-structured domain model rather than implementing them as isolated API features.
+No license has been selected yet. A license can be added once the intended reuse and distribution terms have been decided.
